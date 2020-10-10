@@ -1,21 +1,9 @@
 cmake_minimum_required(VERSION 3.8)
-project(MyLibraryTests)
+project(MyLibrary)
+include(../cmake/macros.cmake)
 
-find_package(GTest MODULE REQUIRED)
-
-if(NOT TARGET MyLibrary)
-	find_package(MyLibrary CONFIG REQUIRED PATHS ../install/)
-endif()
 enable_testing()
 
-add_executable(${PROJECT_NAME} test_myalgorithm.cpp)
-
-target_link_libraries(${PROJECT_NAME}
-	PRIVATE
-		Dnae::MyLibrary
-		GTest::Main
-)
-
-add_test(NAME MyLibrary.UnitTests
-	COMMAND MyLibraryTests
-)
+dnae_setup_tests(${PROJECT_NAME}
+		test_myalgorithm.cpp
+		test_myalgorithmb.cpp)

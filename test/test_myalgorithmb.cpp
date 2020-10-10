@@ -8,10 +8,10 @@ using namespace testing;
 using namespace dnae;
 using namespace dnae::MyLibrary;
 
-TEST(MyAlgorithmUnit,Compute)
+
+TEST(MyAlgorithmUnit,Detect)
 {
     MyAlgorithm myAlgorithm;
-    
-    EXPECT_EQ(2,myAlgorithm.compute(1));
-}
 
+    EXPECT_EQ(false,myAlgorithm.detector(cv::Mat()));
+}
