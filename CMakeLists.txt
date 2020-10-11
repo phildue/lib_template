@@ -1,18 +1,18 @@
 cmake_minimum_required(VERSION 3.8)
 project(MyLibrary VERSION 0.0.1)
-include(cmake/macros.cmake)
+include(tools/Macros.cmake)
 
 # Dependencies
 find_package( OpenCV REQUIRED )
 
 
 set(sources
-		src/MyLibrary/MyAlgorithm.cpp
+		src/MyLibrary/MyAlgorithm/MyAlgorithm.cpp
 		)
 
 set(headers
-		include/MyLibrary/MyAlgorithm.h
-		include/MyLibrary/MyLibrary.h
+		src/MyLibrary/MyAlgorithm/MyAlgorithm.h
+		src/MyLibrary/MyLibrary.h
 		)
 
 dnae_setup_library(${PROJECT_NAME} ${PROJECT_VERSION} ${sources} ${headers})

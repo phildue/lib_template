@@ -1,4 +1,4 @@
-#include "MyLibrary/MyAlgorithm.h"
+#include "MyAlgorithm.h"
 
 namespace dnae{
 namespace MyLibrary{

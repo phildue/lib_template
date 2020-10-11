@@ -14,7 +14,7 @@ function(dnae_setup_library name version sources headers)
 
     # Set include path (can be different in build/install)
     target_include_directories(${name} PUBLIC
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/>
             $<INSTALL_INTERFACE:include>
             )
     # Install everything a user of the library needs
@@ -32,8 +32,11 @@ function(dnae_setup_library name version sources headers)
             DESTINATION lib/cmake/${name}
             )
 
-    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/${name}
-            DESTINATION include)
+    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/src/
+            DESTINATION include
+            FILES_MATCHING # install only matched files
+            PATTERN "*.h" # select header files
+            )
 
     include(CMakePackageConfigHelpers)
 
@@ -42,7 +45,7 @@ function(dnae_setup_library name version sources headers)
             COMPATIBILITY SameMajorVersion
             )
 
-    install(FILES ${CMAKE_CURRENT_LIST_DIR}/cmake/${name}Config.cmake ${CMAKE_CURRENT_BINARY_DIR}/${name}ConfigVersion.cmake
+    install(FILES ${CMAKE_CURRENT_LIST_DIR}/tools/${name}Config.cmake ${CMAKE_CURRENT_BINARY_DIR}/${name}ConfigVersion.cmake
             DESTINATION lib/cmake/${name})
 endfunction()
 

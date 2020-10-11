@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 project(MyLibrary)
-include(../cmake/macros.cmake)
+include(../tools/Macros.cmake)
 
 enable_testing()
 
