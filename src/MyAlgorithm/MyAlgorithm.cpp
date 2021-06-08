@@ -1,16 +1,14 @@
 #include "MyAlgorithm.h"
-
-namespace dnae{
+#include <iostream>
+namespace pd{
 namespace MyLibrary{
 
 int MyAlgorithm::compute(int i) const
 {
+std::cout << "hello" << std::endl;
 	return i+1;
 }
 
-bool MyAlgorithm::detector(const cv::Mat &) const {
-    return false;
-}
 
 }
 }

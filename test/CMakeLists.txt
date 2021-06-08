@@ -3,7 +3,20 @@ project(MyLibrary)
 include(../tools/Macros.cmake)
 
 enable_testing()
+find_package(GTest MODULE REQUIRED)
 
-dnae_setup_tests(${PROJECT_NAME}
-		test_myalgorithm.cpp
-		test_myalgorithmb.cpp)
+if(NOT TARGET PD::MyLibrary)
+	find_package(MyLibrary REQUIRED)
+endif()
+
+add_executable(MyLibraryTests test_myalgorithm.cpp)
+
+target_link_libraries(MyLibraryTests
+    PRIVATE
+    PD::MyLibrary
+    GTest::Main
+    )
+
+add_test(NAME MyLibrary.UnitTests
+    COMMAND MyLibraryTests
+    )

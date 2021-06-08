@@ -1,25 +1,26 @@
 cmake_minimum_required(VERSION 3.8)
-project(MyLibrary VERSION 0.0.1)
-include(tools/Macros.cmake)
+project(MyLibrary VERSION 1.0.0)
 
-# Dependencies
-find_package( OpenCV REQUIRED )
-
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/tools)
+include(Macros)
 
 set(sources
-		src/MyLibrary/MyAlgorithm/MyAlgorithm.cpp
+		src/MyAlgorithm/MyAlgorithm.cpp
 		)
 
 set(headers
-		src/MyLibrary/MyAlgorithm/MyAlgorithm.h
-		src/MyLibrary/MyLibrary.h
+		src/MyAlgorithm/MyAlgorithm.h
+		include/MyLibrary/MyLibrary.h
 		)
 
-dnae_setup_library(${PROJECT_NAME} ${PROJECT_VERSION} ${sources} ${headers})
+setup_package(${PROJECT_NAME} ${PROJECT_VERSION} "${sources}" "${headers}" PD)
 
-target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+
+# Dependencies
+
 # Add tests
-add_subdirectory(test)
-
-
-
+option(MyLibrary_BUILD_TESTS "Enable to build tests" ON)
+if(MyLibrary_BUILD_TESTS)
+	enable_testing()
+	add_subdirectory(test)
+endif()

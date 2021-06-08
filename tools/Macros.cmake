@@ -1,70 +1,65 @@
-function(dnae_setup_library name version sources headers)
+function(setup_package name version sources headers namespace)
 
-    # Construct library from sources
-    add_library(${name}
-            ${sources}
-            ${headers}
-            )
+# Construct library from sources
+add_library(${name}
+    ${sources}
+    ${headers}
+    )
 
-    # Configure alias so there is no difference whether we link from source/from already built
-    add_library(Dnae::${name} ALIAS ${name})
+# Configure alias so there is no difference whether we link from source/from already built
+add_library(${namespace}::${name} ALIAS ${name})
 
-    # Set target features
-    target_compile_features(${name} PUBLIC cxx_std_14)
+# Set include path (can be different in build/install)
+target_include_directories(${name} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/>
+    $<INSTALL_INTERFACE:include/>
+    )
+target_include_directories(${name} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include/>
+    $<INSTALL_INTERFACE:include>
+    )
+# Install everything a user of the library needs
+install(TARGETS ${name} EXPORT ${name}Targets
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include
+    )
 
-    # Set include path (can be different in build/install)
-    target_include_directories(${name} PUBLIC
-            $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/>
-            $<INSTALL_INTERFACE:include>
-            )
-    # Install everything a user of the library needs
-    install(TARGETS ${name} EXPORT ${PROJECT_NAME}Targets
-            LIBRARY DESTINATION lib
-            ARCHIVE DESTINATION lib
-            RUNTIME DESTINATION bin
-            INCLUDES DESTINATION include
-            )
+install(EXPORT ${name}Targets
+    DESTINATION lib/cmake/${name}
+    FILE ${name}Targets.cmake
+    NAMESPACE ${namespace}::
+    DESTINATION lib/cmake/${name}
+    )
 
-    install(EXPORT ${name}Targets
-            DESTINATION lib/cmake/${name}
-            FILE ${name}Targets.cmake
-            NAMESPACE Dnae::
-            DESTINATION lib/cmake/${name}
-            )
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/src/
+    DESTINATION include/${name}
+    FILES_MATCHING # install only matched files
+    PATTERN "*.h" # select header files
+    )
+    
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/
+    DESTINATION include/
+    FILES_MATCHING # install only matched files
+    PATTERN "*.h" # select header files
+    )
 
-    install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/src/
-            DESTINATION include
-            FILES_MATCHING # install only matched files
-            PATTERN "*.h" # select header files
-            )
+include(CMakePackageConfigHelpers)
 
-    include(CMakePackageConfigHelpers)
+write_basic_package_version_file(${name}ConfigVersion.cmake
+    VERSION ${version}
+    COMPATIBILITY SameMajorVersion
+    )
 
-    write_basic_package_version_file(${name}ConfigVersion.cmake
-            VERSION ${version}
-            COMPATIBILITY SameMajorVersion
-            )
+# install export target and config for find_package
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+	"${CMAKE_CURRENT_LIST_DIR}/tools/${name}Config.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake"
+	INSTALL_DESTINATION "lib/cmake/${name}"
+)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${name}Config.cmake" DESTINATION "lib/cmake/${name}")
 
-    install(FILES ${CMAKE_CURRENT_LIST_DIR}/tools/${name}Config.cmake ${CMAKE_CURRENT_BINARY_DIR}/${name}ConfigVersion.cmake
-            DESTINATION lib/cmake/${name})
+
 endfunction()
 
-function(dnae_setup_tests target_name test_sources)
-    find_package(GTest MODULE REQUIRED)
-
-    if(NOT TARGET ${target_name})
-        find_package(${target_name} CONFIG REQUIRED PATHS ../install/)
-    endif()
-
-    add_executable(${target_name}Tests ${test_sources})
-
-    target_link_libraries(${target_name}Tests
-            PRIVATE
-            Dnae::${target_name}
-            GTest::Main
-            )
-
-    add_test(NAME ${target_name}.UnitTests
-            COMMAND ${target_name}Tests
-            )
-endfunction()
