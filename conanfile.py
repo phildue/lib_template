@@ -13,6 +13,8 @@ class RecipeConan(ConanFile):
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {"shared": False, "fPIC": True}
     generators = "cmake_paths","cmake"
+    def requirements(self):
+        self.requires("gtest/cci.20210126")
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -28,6 +30,7 @@ class RecipeConan(ConanFile):
     def _configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["CMAKE_INSTALL_PREFIX"]=self.package_folder
+        cmake.definitions["MyLibrary_BUILD_TESTS"]=False
         cmake.configure()
         return cmake
 
