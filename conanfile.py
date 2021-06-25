@@ -4,17 +4,18 @@ from conans import ConanFile, CMake, tools
 class RecipeConan(ConanFile):
     name = "MyLibrary"
     version = "1.0.0"
-    license = "<Put the package license here>"
+    license = "https://github.com/phildue/lib_template/blob/master/LICENSE"
     author = "<Put your name here> <And your email here>"
-    url = "<Package recipe repository url here, for issues about the package>"
-    description = "<Description of MyLibrary here>"
-    topics = ("<Put some tag here>", "<here>", "<and here>")
+    url = "https://github.com/phildue/lib_template"
+    description = "Template for c++ lib as conan package."
+    topics = ("C++", "Conan", "DevOps")
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False], "fPIC": [True, False]}
-    default_options = {"shared": False, "fPIC": True}
+    options = {"shared": [True, False], "fPIC": [True, False], "build_tests":[True, False]}
+    default_options = {"shared": False, "fPIC": True, "build_tests": False}
     generators = "cmake_paths","cmake"
     def requirements(self):
-        self.requires("gtest/cci.20210126")
+        if self.options.build_tests:
+           self.requires("gtest/cci.20210126")
 
     def config_options(self):
         if self.settings.os == "Windows":
@@ -30,7 +31,7 @@ class RecipeConan(ConanFile):
     def _configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["CMAKE_INSTALL_PREFIX"]=self.package_folder
-        cmake.definitions["MyLibrary_BUILD_TESTS"]=False
+        cmake.definitions["MyLibrary_BUILD_TESTS"]=self.options.build_tests
         cmake.configure()
         return cmake
 
@@ -45,5 +46,5 @@ class RecipeConan(ConanFile):
 
 
     def package_info(self):
-        self.cpp_info.libs = ["MyLibrary"]
+        self.cpp_info.libs = [self.name]
 
